@@ -15,8 +15,10 @@ chrome.extension.sendMessage({}, function(response) {
 			  context: answer
 			})
 			.done(function(data) {
-				var product_title_html = data.match(/<h1.+\s*.+\s*<\/h1>/)[0];
-				var product_title = $.trim($(product_title_html).text());
+				var product_title_html = data.match(/<h1.+\s*.+\s*<\/h1>/);
+				if (!product_title_html) product_title_html = data.match(/<h2.+\s*.+\s*<\/h2>/);
+				if (!product_title_html) product_title_html = data.match(/<b.+\s*.+\s*<\/b>/);
+				var product_title = $.trim($(product_title_html[0]).text());
 				this.innerHTML = "<a href="+this.innerText+">"+product_title+"</a>";
 			});
 		}
@@ -32,7 +34,7 @@ $.ajaxPrefilter( function (options) {
 });
 
 function is_valid_url(str) {
-  var pattern = new RegExp('^(http|https|www|m.)');
+  var pattern = new RegExp('^(http|https|www|m\.)');
   if(!pattern.test(str)) {
     return false;
   } else {
